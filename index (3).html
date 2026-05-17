@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PatrimoLink</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--navy:#1a1a2e;--gold:#c9a84c;--gold2:#f0c040;--cream:#faf8f3;--cream2:#f0ede4;--text:#1a1a2e;--text2:#5a5a7a;--green:#2d9e6b;--red:#e05252;--blue:#2563eb;--r:16px;--shadow:0 4px 24px rgba(26,26,46,.12)}
+body{font-family:"Sora",sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+.btn{padding:1rem 1.5rem;border-radius:12px;font-family:"Sora",sans-serif;font-size:.95rem;font-weight:600;border:none;cursor:pointer;width:100%;margin-bottom:.7rem}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.4);color:#fff}
+.btn-ghost{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.btn-navy{background:var(--navy);color:#fff}
+.topbar{background:var(--navy);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-logo{font-family:"DM Serif Display",serif;font-size:1.3rem;color:var(--gold)}
+.back-btn{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.5rem;cursor:pointer;padding:.2rem .5rem}
+.content{flex:1;padding:1.2rem;overflow-y:auto;padding-bottom:5rem}
+.card{background:#fff;border-radius:var(--r);padding:1.2rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card-title{font-size:.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.8rem}
+.form-group{margin-bottom:.9rem}
+.form-label{font-size:.78rem;font-weight:600;color:var(--text2);display:block;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;padding:.8rem 1rem;border:1.5px solid var(--cream2);border-radius:10px;font-family:"Sora",sans-serif;font-size:.9rem;color:var(--text);background:#fff;outline:none}
+.form-input:focus{border-color:var(--gold)}
+textarea.form-input{resize:vertical;min-height:80px}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27%3E%3Cpath fill=%27%235a5a7a%27 d=%27M7 10l5 5 5-5z%27/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center}
+.submit-btn{width:100%;padding:1rem;background:var(--navy);color:#fff;border:none;border-radius:12px;font-family:"Sora",sans-serif;font-size:1rem;font-weight:600;cursor:pointer;margin-top:.5rem}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed}
+.stat-box{background:#fff;border-radius:12px;padding:.9rem;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:1.6rem;font-weight:700}
+.stat-lbl{font-size:.68rem;color:var(--text2);margin-top:.2rem}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--cream2);display:flex;z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:.55rem 0 .7rem;cursor:pointer;gap:.2rem}
+.nav-icon{font-size:1.25rem}
+.nav-label{font-size:.6rem;font-weight:600;color:var(--text2)}
+.nav-item.active .nav-label{color:var(--navy)}
+.reco-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--cream2)}
+.reco-item:last-child{border-bottom:none}
+.reco-avatar{width:40px;height:40px;border-radius:50%;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.reco-info{flex:1}
+.reco-name{font-weight:600;font-size:.88rem}
+.reco-date{font-size:.73rem;color:var(--text2);margin-top:.1rem}
+.badge{font-size:.7rem;font-weight:600;padding:.2rem .6rem;border-radius:99px}
+.badge-pend{background:#fff7e6;color:#b8860b}
+.badge-sign{background:rgba(45,158,107,.1);color:var(--green)}
+.badge-cont{background:rgba(37,99,235,.1);color:var(--blue)}
+.consent-check{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem;cursor:pointer}
+.consent-check input{width:18px;height:18px;min-width:18px;margin-top:2px;accent-color:var(--navy);cursor:pointer}
+.consent-check span{font-size:.8rem;color:var(--text2);line-height:1.5}
+.req{color:var(--red);font-weight:700}
+.palier-chip{min-width:100px;background:#fff;border:1.5px solid var(--cream2);border-radius:12px;padding:.75rem;text-align:center;flex-shrink:0}
+.palier-chip.active-p{border-color:var(--gold)}
+.palier-chip.done-p{border-color:var(--green)}
+.tip{background:var(--navy);color:#fff;border-radius:8px;padding:.7rem 1rem;font-size:.8rem;line-height:1.5;margin-bottom:1rem}
+.tip strong{color:var(--gold2)}
+.notif{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:.65rem 1.4rem;border-radius:99px;font-size:.83rem;font-weight:500;z-index:999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem;width:100%;max-height:85vh;overflow-y:auto}
+.section-title{font-size:.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin:.8rem 0 .6rem}
+.admin-stat{background:var(--cream);border-radius:10px;padding:.9rem;text-align:center}
+.admin-stat-num{font-size:1.5rem;font-weight:700}
+.admin-stat-lbl{font-size:.68rem;color:var(--text2);margin-top:.1rem}
+.client-row{display:flex;align-items:center;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--cream2);cursor:pointer}
+.client-row:last-child{border-bottom:none}
+.tag{display:inline-block;font-size:.68rem;padding:.18rem .55rem;border-radius:6px;font-weight:600;margin:.15rem}
+.tag-green{background:rgba(45,158,107,.12);color:var(--green)}
+.tag-gold{background:rgba(201,168,76,.12);color:#8b6914}
+.success-screen{align-items:center;justify-content:center;text-align:center;padding:2rem;background:var(--cream)}
+/* Messages */
+.msg-card{background:#fff;border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.8rem;box-shadow:var(--shadow);border-left:4px solid var(--cream2)}
+.msg-card.prog{border-left-color:var(--green)}
+.msg-card.draft{border-left-color:var(--gold)}
+.msg-card.sent{border-left-color:var(--text2)}
+.template-card{background:#fff;border-radius:12px;padding:.9rem;cursor:pointer;box-shadow:var(--shadow);border:1.5px solid transparent}
+.template-card:hover{border-color:var(--gold)}
+.segment-chip{display:inline-block;font-size:.72rem;padding:.25rem .65rem;border-radius:99px;margin:.2rem;cursor:pointer;border:1.5px solid var(--cream2);background:#fff;font-weight:500}
+.segment-chip.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+</style>
+</head>
+<body>
+
+<!-- NOTIF -->
+<div id="notif" class="notif"></div>
+
+<!-- MODAL POLICY -->
+<div class="modal-bg" id="policy-modal">
+<div class="modal">
+  <h3 style="font-family:DM Serif Display,serif;font-size:1.2rem;margin-bottom:1rem">Politique de confidentialite</h3>
+  <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:.8rem"><strong>Responsable :</strong> Albert Issom, Conseiller en Gestion de Patrimoine, Pluralle.</p>
+  <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:.8rem"><strong>Donnees collectees :</strong> Nom, prenom, telephone, email, sujet patrimonial.</p>
+  <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:.8rem"><strong>Finalite :</strong> Mise en relation avec le conseiller, suivi des recommandations.</p>
+  <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:.8rem"><strong>Base legale :</strong> Consentement explicite (Art. 6.1.a RGPD).</p>
+  <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:.8rem"><strong>Vos droits :</strong> Acces, rectification, effacement, opposition. CNIL : www.cnil.fr</p>
+  <button class="submit-btn" onclick="closeModal()">Fermer</button>
+</div>
+</div>
+
+<!-- MODAL CONTACT -->
+<div class="modal-bg" id="contact-modal">
+<div class="modal" style="position:relative">
+  <button onclick="closeModal()" style="position:absolute;right:1rem;top:1rem;background:var(--cream2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:1rem">x</button>
+  <h3 style="font-family:DM Serif Display,serif;font-size:1.1rem;margin-bottom:1rem" id="modal-nom">Contact</h3>
+  <div style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">Tel : <strong id="modal-tel">-</strong></div>
+  <div style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">Sujet : <strong id="modal-sujet">-</strong></div>
+  <div style="font-size:.85rem;color:var(--text2);margin-bottom:1rem">Via : <strong id="modal-via">-</strong></div>
+  <div class="form-group">
+    <label class="form-label">Statut</label>
+    <select class="form-input" id="modal-statut">
+      <option>En attente</option>
+      <option>Contacte - RDV planifie</option>
+      <option>Signe</option>
+      <option>Non interesse</option>
+    </select>
+  </div>
+  <button class="submit-btn" onclick="saveStatut()">Enregistrer</button>
+</div>
+</div>
+
+<!-- ============================
+     LANDING
+============================ -->
+<div id="landing" class="screen active">
+<div style="background:var(--navy);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;min-height:100vh">
+  <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:24px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:var(--navy)" id="logo-mark">PL</div>
+  <div style="font-family:DM Serif Display,serif;font-size:2.2rem;color:#fff" id="app-name">PatrimoLink</div>
+  <div style="font-size:.82rem;color:rgba(255,255,255,.5);margin-top:.3rem;margin-bottom:2rem" id="app-tag">Recommandez - Recompensez - Reussissez</div>
+  <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:2rem;max-width:360px;width:100%;margin-bottom:1.5rem">
+    <h2 style="font-family:DM Serif Display,serif;font-size:1.4rem;color:#fff;margin-bottom:.7rem" id="landing-title">Vos proches ont des questions patrimoniales ?</h2>
+    <p style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.7" id="landing-desc">Recommandez votre conseiller et gagnez des recompenses a chaque contrat signe.</p>
+  </div>
+  <div style="max-width:360px;width:100%">
+    <button class="btn btn-gold" onclick="goTo('consent-gate','client-home')">Espace client</button>
+    <button class="btn btn-outline" onclick="goTo('consent-gate','referral-welcome')">J'ai ete recommande(e)</button>
+    <button class="btn btn-ghost" onclick="goTo('admin-login')">Espace conseiller</button>
+  </div>
+  <p style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:1.2rem">Donnees protegees - RGPD - <span style="text-decoration:underline;cursor:pointer" onclick="openModal('policy-modal')">Confidentialite</span></p>
+</div>
+</div>
+
+<!-- ============================
+     CONSENTEMENT
+============================ -->
+<div id="consent-gate" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">PatrimoLink</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div style="text-align:center;padding:1.5rem 0 1rem">
+    <div style="font-size:2.5rem;margin-bottom:.7rem">&#128274;</div>
+    <div style="font-family:DM Serif Display,serif;font-size:1.4rem;color:var(--navy);margin-bottom:.5rem">Avant de continuer</div>
+    <p style="font-size:.85rem;color:var(--text2);line-height:1.6">Votre consentement est requis pour utiliser ce service.</p>
+  </div>
+  <div class="card">
+    <div class="consent-check" onclick="toggle('cg1')">
+      <input type="checkbox" id="cg1" onchange="checkConsent()">
+      <span><span class="req">*</span> J'accepte que mes donnees personnelles soient collectees et traitees par mon conseiller en gestion de patrimoine.</span>
+    </div>
+    <div class="consent-check" onclick="toggle('cg2')">
+      <input type="checkbox" id="cg2" onchange="checkConsent()">
+      <span><span class="req">*</span> J'ai lu et j'accepte la <a href="#" onclick="openModal('policy-modal');return false" style="color:var(--navy)">politique de confidentialite</a>.</span>
+    </div>
+  </div>
+  <button class="submit-btn" id="consent-btn" onclick="validateConsent()" disabled>Continuer</button>
+</div>
+</div>
+
+<!-- ============================
+     CLIENT HOME
+============================ -->
+<div id="client-home" class="screen">
+<div class="topbar">
+  <div class="topbar-logo">PatrimoLink</div>
+  <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:var(--navy)" id="client-avatar">?</div>
+</div>
+<div class="content">
+  <!-- Reward banner -->
+  <div style="background:linear-gradient(135deg,var(--navy),#16213e);border-radius:var(--r);padding:1.3rem;margin-bottom:1rem;color:#fff">
+    <div style="font-size:.75rem;color:rgba(255,255,255,.6);margin-bottom:.3rem">Progression vers le prochain cadeau</div>
+    <div style="font-family:DM Serif Display,serif;font-size:1.3rem;color:var(--gold2);margin-bottom:.3rem" id="reward-title">Commencez a recommander !</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:.8rem" id="reward-sub">Chaque signature vous rapproche d'une recompense</div>
+    <div style="background:rgba(255,255,255,.15);border-radius:99px;height:8px;overflow:hidden">
+      <div style="background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:99px;height:8px;transition:width .6s" id="reward-bar" style="width:0%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.75rem">
+      <span style="color:var(--gold2);font-weight:600" id="reward-count">0 signature</span>
+      <span style="color:rgba(255,255,255,.5)" id="reward-next">&#127873; Premier palier</span>
+    </div>
+  </div>
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin-bottom:1rem">
+    <div class="stat-box"><div class="stat-num" id="cl-recos">0</div><div class="stat-lbl">Recommandees</div></div>
+    <div class="stat-box"><div class="stat-num" id="cl-sigs" style="color:var(--green)">0</div><div class="stat-lbl">Signees</div></div>
+    <div class="stat-box"><div class="stat-num" id="cl-gifts" style="color:var(--gold)">0</div><div class="stat-lbl">Cadeaux</div></div>
+  </div>
+  <!-- Paliers -->
+  <div class="card">
+    <div class="card-title">Paliers de recompenses</div>
+    <div style="display:flex;gap:.8rem;overflow-x:auto;padding-bottom:.5rem" id="paliers-home"></div>
+  </div>
+  <!-- Recos -->
+  <div class="card">
+    <div class="card-title">Mes recommandations</div>
+    <div id="client-reco-list"><div style="font-size:.83rem;color:var(--text2);text-align:center;padding:1rem">Aucune recommandation pour l'instant.</div></div>
+  </div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="navTo(this,'client-home')"><div class="nav-icon">&#127968;</div><div class="nav-label">Accueil</div></div>
+  <div class="nav-item" onclick="navTo(this,'recommander')"><div class="nav-icon">&#10133;</div><div class="nav-label">Recommander</div></div>
+  <div class="nav-item" onclick="navTo(this,'prendre-rdv')"><div class="nav-icon">&#128197;</div><div class="nav-label">Rendez-vous</div></div>
+  <div class="nav-item" onclick="navTo(this,'partager')"><div class="nav-icon">&#128279;</div><div class="nav-label">Mon lien</div></div>
+  <div class="nav-item" onclick="navTo(this,'mes-recompenses')"><div class="nav-icon">&#127873;</div><div class="nav-label">Cadeaux</div></div>
+</div>
+</div>
+
+<!-- ============================
+     RECOMMANDER
+============================ -->
+<div id="recommander" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Recommander</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div class="tip"><strong>Comment ca marche ?</strong> Renseignez les infos de votre proche. Des qu'il signe un contrat, vous gagnez des points !</div>
+  <div class="card">
+    <div class="card-title">Informations</div>
+    <div class="form-group"><label class="form-label">Prenom et Nom <span class="req">*</span></label><input type="text" class="form-input" id="reco-name" oninput="chkReco()"></div>
+    <div class="form-group"><label class="form-label">Telephone <span class="req">*</span></label><input type="tel" class="form-input" id="reco-phone" oninput="chkReco()"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reco-email"></div>
+    <div class="form-group"><label class="form-label">Sujet <span class="req">*</span></label><select class="form-input" id="reco-sujet" onchange="chkReco()"><option value="">Choisir...</option></select></div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="reco-msg"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Consentement RGPD obligatoire</div>
+    <div class="consent-check" onclick="toggle('rc1')"><input type="checkbox" id="rc1" onchange="chkReco()"><span><span class="req">*</span> J'ai obtenu l'accord verbal de mon contact pour transmettre ses coordonnees.</span></div>
+    <div class="consent-check" onclick="toggle('rc2')"><input type="checkbox" id="rc2" onchange="chkReco()"><span><span class="req">*</span> Mon contact a ete informe du traitement de ses donnees conformement au RGPD.</span></div>
+  </div>
+  <!-- Formulaire Netlify -->
+  <form name="recommandation" netlify style="display:none" id="nf-reco">
+    <input name="form-name" value="recommandation">
+    <input name="nom" id="nf-nom"><input name="telephone" id="nf-tel">
+    <input name="email" id="nf-email"><input name="sujet" id="nf-sujet">
+    <input name="message" id="nf-msg"><input name="parrain" id="nf-parrain">
+    <input name="date" id="nf-date">
+  </form>
+  <button class="submit-btn" id="reco-btn" onclick="sendReco()" disabled>Envoyer la recommandation</button>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item" onclick="navTo(this,'client-home')"><div class="nav-icon">&#127968;</div><div class="nav-label">Accueil</div></div>
+  <div class="nav-item active"><div class="nav-icon">&#10133;</div><div class="nav-label">Recommander</div></div>
+  <div class="nav-item" onclick="navTo(this,'prendre-rdv')"><div class="nav-icon">&#128197;</div><div class="nav-label">Rendez-vous</div></div>
+  <div class="nav-item" onclick="navTo(this,'partager')"><div class="nav-icon">&#128279;</div><div class="nav-label">Mon lien</div></div>
+  <div class="nav-item" onclick="navTo(this,'mes-recompenses')"><div class="nav-icon">&#127873;</div><div class="nav-label">Cadeaux</div></div>
+</div>
+</div>
+
+<!-- ============================
+     PRENDRE RDV
+============================ -->
+<div id="prendre-rdv" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Rendez-vous</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div style="background:linear-gradient(135deg,#0a3d62,#1a5276);border-radius:var(--r);padding:1.4rem;color:#fff;text-align:center;margin-bottom:1rem">
+    <div style="font-size:2.4rem;margin-bottom:.6rem">&#128197;</div>
+    <div style="font-family:DM Serif Display,serif;font-size:1.3rem;color:#fff;margin-bottom:.4rem" id="rdv-title">Decouverte de vos projets</div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:1rem" id="rdv-desc">Prenez rendez-vous directement avec votre conseiller.</div>
+    <button onclick="window.open('https://outlook.office.com/book/DcouvertedevosprojetsAlbertIssom@pluralle.onmicrosoft.com/?ismsaljsauthenabled','_blank')" style="background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:.85rem 1.5rem;font-family:Sora,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;width:100%">Reserver un creneau en ligne</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Sujets que nous pouvons aborder</div>
+    <div id="rdv-sujets"></div>
+  </div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item" onclick="navTo(this,'client-home')"><div class="nav-icon">&#127968;</div><div class="nav-label">Accueil</div></div>
+  <div class="nav-item" onclick="navTo(this,'recommander')"><div class="nav-icon">&#10133;</div><div class="nav-label">Recommander</div></div>
+  <div class="nav-item active"><div class="nav-icon">&#128197;</div><div class="nav-label">Rendez-vous</div></div>
+  <div class="nav-item" onclick="navTo(this,'partager')"><div class="nav-icon">&#128279;</div><div class="nav-label">Mon lien</div></div>
+  <div class="nav-item" onclick="navTo(this,'mes-recompenses')"><div class="nav-icon">&#127873;</div><div class="nav-label">Cadeaux</div></div>
+</div>
+</div>
+
+<!-- ============================
+     PARTAGER
+============================ -->
+<div id="partager" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Mon lien</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div style="background:linear-gradient(135deg,var(--navy),#2a2a5e);border-radius:var(--r);padding:1.5rem;text-align:center;color:#fff;margin-bottom:1rem">
+    <p style="font-size:.82rem;color:rgba(255,255,255,.6)">Votre code personnel</p>
+    <div style="font-family:DM Serif Display,serif;font-size:1.8rem;color:var(--gold2);letter-spacing:6px;margin:1rem 0" id="my-code">----</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:.65rem;font-size:.75rem;color:rgba(255,255,255,.6)" id="my-url">patrimolink.netlify.app</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem">
+      <button onclick="shareWA()" style="padding:.8rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-family:Sora,sans-serif;font-size:.82rem;cursor:pointer">WhatsApp</button>
+      <button onclick="copyLink()" style="padding:.8rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-family:Sora,sans-serif;font-size:.82rem;cursor:pointer">Copier le lien</button>
+    </div>
+  </div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item" onclick="navTo(this,'client-home')"><div class="nav-icon">&#127968;</div><div class="nav-label">Accueil</div></div>
+  <div class="nav-item" onclick="navTo(this,'recommander')"><div class="nav-icon">&#10133;</div><div class="nav-label">Recommander</div></div>
+  <div class="nav-item" onclick="navTo(this,'prendre-rdv')"><div class="nav-icon">&#128197;</div><div class="nav-label">Rendez-vous</div></div>
+  <div class="nav-item active"><div class="nav-icon">&#128279;</div><div class="nav-label">Mon lien</div></div>
+  <div class="nav-item" onclick="navTo(this,'mes-recompenses')"><div class="nav-icon">&#127873;</div><div class="nav-label">Cadeaux</div></div>
+</div>
+</div>
+
+<!-- ============================
+     RECOMPENSES
+============================ -->
+<div id="mes-recompenses" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Mes recompenses</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div class="card" id="recompenses-list"></div>
+  <div class="tip"><strong>Important :</strong> Les recompenses sont attribuees uniquement apres validation d'un contrat signe par votre conseiller.</div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item" onclick="navTo(this,'client-home')"><div class="nav-icon">&#127968;</div><div class="nav-label">Accueil</div></div>
+  <div class="nav-item" onclick="navTo(this,'recommander')"><div class="nav-icon">&#10133;</div><div class="nav-label">Recommander</div></div>
+  <div class="nav-item" onclick="navTo(this,'prendre-rdv')"><div class="nav-icon">&#128197;</div><div class="nav-label">Rendez-vous</div></div>
+  <div class="nav-item" onclick="navTo(this,'partager')"><div class="nav-icon">&#128279;</div><div class="nav-label">Mon lien</div></div>
+  <div class="nav-item active"><div class="nav-icon">&#127873;</div><div class="nav-label">Cadeaux</div></div>
+</div>
+</div>
+
+<!-- ============================
+     REFERRAL WELCOME
+============================ -->
+<div id="referral-welcome" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goTo('landing')">&#8592;</button>
+  <div class="topbar-logo">PatrimoLink</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto;text-align:center;padding-top:1.5rem">
+  <div style="font-size:3rem;margin-bottom:.8rem">&#127873;</div>
+  <div style="font-family:DM Serif Display,serif;font-size:1.5rem;color:var(--navy);margin-bottom:.8rem">Vous avez ete recommande(e) !</div>
+  <div class="card" style="text-align:left">
+    <div class="card-title">Votre conseiller</div>
+    <div style="display:flex;align-items:center;gap:.9rem;margin-bottom:.8rem">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy)">AI</div>
+      <div><div style="font-weight:700">Albert Issom</div><div style="font-size:.78rem;color:var(--text2)">Conseiller en Gestion de Patrimoine - Pluralle</div></div>
+    </div>
+  </div>
+  <div class="card" style="text-align:left">
+    <div class="card-title">Demande de contact</div>
+    <div class="form-group"><label class="form-label">Prenom et Nom <span class="req">*</span></label><input type="text" class="form-input" id="ref-name" oninput="chkRef()"></div>
+    <div class="form-group"><label class="form-label">Telephone <span class="req">*</span></label><input type="tel" class="form-input" id="ref-phone" oninput="chkRef()"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="ref-email"></div>
+    <div class="form-group"><label class="form-label">Sujet <span class="req">*</span></label><select class="form-input" id="ref-sujet" onchange="chkRef()"><option value="">Mon projet...</option></select></div>
+    <div class="consent-check" onclick="toggle('refc1')"><input type="checkbox" id="refc1" onchange="chkRef()"><span><span class="req">*</span> J'accepte que mes donnees soient transmises au conseiller.</span></div>
+    <div class="consent-check" style="margin-top:.5rem" onclick="toggle('refc2')"><input type="checkbox" id="refc2" onchange="chkRef()"><span><span class="req">*</span> J'ai lu la politique de confidentialite RGPD.</span></div>
+    <!-- Netlify form -->
+    <form name="contact-prospect" netlify style="display:none">
+      <input name="form-name" value="contact-prospect">
+      <input name="nom" id="nf-ref-nom"><input name="telephone" id="nf-ref-tel">
+      <input name="email" id="nf-ref-email"><input name="sujet" id="nf-ref-sujet">
+      <input name="date" id="nf-ref-date">
+    </form>
+    <button class="submit-btn" id="ref-btn" onclick="sendContact()" disabled style="margin-top:.8rem">Demander a etre contacte(e)</button>
+    <div style="text-align:center;margin-top:.8rem">
+      <button onclick="window.open('https://outlook.office.com/book/DcouvertedevosprojetsAlbertIssom@pluralle.onmicrosoft.com/?ismsaljsauthenabled','_blank')" style="background:#0a3d62;color:#fff;border:none;border-radius:10px;padding:.8rem 1.5rem;font-family:Sora,sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;width:100%">Reserver directement dans l'agenda</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN LOGIN
+============================ -->
+<div id="admin-login" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goTo('landing')">&#8592;</button>
+  <div class="topbar-logo">Espace Conseiller</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh">
+  <div style="font-size:2.8rem;text-align:center;margin-bottom:.8rem">&#128274;</div>
+  <div style="font-family:DM Serif Display,serif;font-size:1.4rem;margin-bottom:1.5rem">Administration</div>
+  <div class="card" style="width:100%;max-width:360px">
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="adm-email" placeholder="votre@email.fr"></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" class="form-input" id="adm-pwd" placeholder="Votre mot de passe" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+    <button class="submit-btn" onclick="adminLogin()">Acceder au tableau de bord</button>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN DASHBOARD
+============================ -->
+<div id="admin-dashboard" class="screen">
+<div style="background:linear-gradient(135deg,#0d0d1a,var(--navy));padding:1.5rem 1.2rem 2.5rem;color:#fff">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div><div style="font-family:DM Serif Display,serif;font-size:1.5rem;color:var(--gold)">PatrimoLink</div><div style="font-size:.78rem;color:rgba(255,255,255,.5)">Tableau de bord</div></div>
+    <div style="display:flex;gap:.5rem">
+      <button onclick="goTo('admin-messages')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:.45rem .8rem;border-radius:8px;font-family:Sora,sans-serif;font-size:.78rem;cursor:pointer">Messages</button>
+      <button onclick="goTo('admin-settings')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--gold2);padding:.45rem .8rem;border-radius:8px;font-family:Sora,sans-serif;font-size:.78rem;cursor:pointer">Reglages</button>
+    </div>
+  </div>
+</div>
+<div class="content" style="padding-top:0;margin-top:-1rem">
+  <div style="background:#fff;border-radius:var(--r);padding:1.2rem;margin-bottom:1rem;box-shadow:0 8px 32px rgba(0,0,0,.12)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.5rem">
+      <div class="admin-stat"><div class="admin-stat-num" id="adm-clients">0</div><div class="admin-stat-lbl">Clients</div></div>
+      <div class="admin-stat"><div class="admin-stat-num" id="adm-recos">0</div><div class="admin-stat-lbl">Recommandations</div></div>
+      <div class="admin-stat"><div class="admin-stat-num" id="adm-sigs" style="color:var(--green)">0</div><div class="admin-stat-lbl">Signatures</div></div>
+      <div class="admin-stat"><div class="admin-stat-num" id="adm-conv" style="color:var(--gold)">-</div><div class="admin-stat-lbl">Taux conv.</div></div>
+    </div>
+    <button onclick="refreshAdmin();showNotif('Donnees actualisees ')" style="width:100%;padding:.65rem;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;font-family:Sora,sans-serif;font-size:.8rem;font-weight:600;color:#8b6914;cursor:pointer;margin-top:.5rem">Actualiser les donnees</button>
+  </div>
+  <div class="section-title">Agenda Outlook Bookings</div>
+  <div class="card" style="text-align:center;padding:1.2rem">
+    <button onclick="window.open('https://outlook.office.com/book/DcouvertedevosprojetsAlbertIssom@pluralle.onmicrosoft.com/?ismsaljsauthenabled','_blank')" style="background:var(--blue);color:#fff;border:none;border-radius:10px;padding:.75rem 1.5rem;font-family:Sora,sans-serif;font-size:.88rem;font-weight:600;cursor:pointer">Ouvrir mon agenda Outlook</button>
+  </div>
+  <div class="section-title">Nouvelles recommandations</div>
+  <div class="card"><div id="adm-reco-list"><div style="font-size:.82rem;color:var(--text2)">Aucune recommandation recue pour l'instant.</div></div></div>
+  <div class="section-title">Clients</div>
+  <div class="card"><div id="adm-clients-list"><div style="font-size:.82rem;color:var(--text2)">Aucun client enregistre.</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem">
+    <button onclick="goTo('admin-add-client')" style="padding:1rem;background:#fff;border:1.5px solid var(--cream2);border-radius:12px;font-family:Sora,sans-serif;font-size:.8rem;font-weight:600;cursor:pointer">Ajouter un client</button>
+    <button onclick="goTo('admin-settings')" style="padding:1rem;background:var(--navy);border:none;border-radius:12px;font-family:Sora,sans-serif;font-size:.8rem;font-weight:600;color:var(--gold2);cursor:pointer">Reglages</button>
+  </div>
+  <button onclick="goTo('landing')" style="width:100%;margin-bottom:2rem;padding:.9rem;background:transparent;border:1.5px solid var(--cream2);border-radius:10px;font-family:Sora,sans-serif;font-size:.88rem;font-weight:600;color:var(--text2);cursor:pointer">Deconnexion</button>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN ADD CLIENT
+============================ -->
+<div id="admin-add-client" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Ajouter un client</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:480px;margin:0 auto">
+  <div class="card">
+    <div class="form-group"><label class="form-label">Prenom et Nom</label><input type="text" class="form-input" id="nc-nom" placeholder="Marie Martin"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="nc-email" placeholder="marie@email.fr"></div>
+    <div class="form-group"><label class="form-label">Telephone</label><input type="tel" class="form-input" id="nc-tel" placeholder="+33 6 00 00 00 00"></div>
+    <div class="form-group"><label class="form-label">Code parrainage (optionnel)</label><input type="text" class="form-input" id="nc-code" placeholder="ex. MM2025"></div>
+    <button class="submit-btn" onclick="addClient()">Creer et envoyer invitation</button>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN SETTINGS
+============================ -->
+<div id="admin-settings" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Reglages</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:520px;margin:0 auto">
+  <div class="card">
+    <div class="card-title">Identite de l'application</div>
+    <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="s-name" placeholder="PatrimoLink"></div>
+    <div class="form-group"><label class="form-label">Slogan</label><input type="text" class="form-input" id="s-tag"></div>
+    <div class="form-group"><label class="form-label">Initiales logo</label><input type="text" class="form-input" id="s-logo" maxlength="3"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Sujets patrimoniaux</div>
+    <div id="sujets-list" style="margin-bottom:.8rem"></div>
+    <div style="display:flex;gap:.6rem">
+      <input type="text" class="form-input" id="new-sujet" placeholder="Nouveau sujet..." style="flex:1">
+      <button onclick="addSujet()" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:.7rem 1rem;font-family:Sora,sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">+</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Paliers de recompenses</div>
+    <div id="paliers-admin"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Changer le mot de passe admin</div>
+    <div class="form-group"><label class="form-label">Nouveau mot de passe</label><input type="password" class="form-input" id="new-pwd" placeholder="Minimum 8 caracteres"></div>
+    <div class="form-group"><label class="form-label">Confirmer</label><input type="password" class="form-input" id="new-pwd2"></div>
+    <button class="submit-btn" onclick="changePwd()">Changer le mot de passe</button>
+  </div>
+  <button class="submit-btn" onclick="saveSettings()" style="margin-bottom:2rem">Enregistrer tous les reglages</button>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN MESSAGES
+============================ -->
+<div id="admin-messages" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Messages clients</div>
+  <button onclick="goTo('admin-compose')" style="background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:.4rem .85rem;font-family:Sora,sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">+ Nouveau</button>
+</div>
+<div class="content" style="max-width:520px;margin:0 auto">
+  <div class="section-title">Templates rapides</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1rem" id="msg-templates"></div>
+  <div class="section-title">Mes campagnes</div>
+  <div id="msg-list"><div style="font-size:.83rem;color:var(--text2);text-align:center;padding:2rem">Aucune campagne. Creez votre premier message !</div></div>
+</div>
+</div>
+
+<!-- ============================
+     ADMIN COMPOSE
+============================ -->
+<div id="admin-compose" class="screen">
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">&#8592;</button>
+  <div class="topbar-logo">Nouveau message</div>
+  <div style="width:40px"></div>
+</div>
+<div class="content" style="max-width:520px;margin:0 auto">
+  <div class="card">
+    <div class="card-title">Objet</div>
+    <input type="text" class="form-input" id="c-objet" placeholder="Sujet du message...">
+  </div>
+  <div class="card">
+    <div class="card-title">Message</div>
+    <textarea class="form-input" id="c-body" style="min-height:150px" placeholder="Votre message..."></textarea>
+  </div>
+  <div class="card">
+    <div class="card-title">Destinataires</div>
+    <div id="c-segments"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Envoi</div>
+    <select class="form-input" id="c-quand">
+      <option value="now">Maintenant</option>
+      <option value="later">A une date precise</option>
+      <option value="annual">Chaque annee (recurrent)</option>
+    </select>
+    <input type="datetime-local" class="form-input" id="c-date" style="margin-top:.7rem;display:none">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:2rem">
+    <button onclick="saveDraft()" style="padding:1rem;background:#fff;border:1.5px solid var(--cream2);border-radius:12px;font-family:Sora,sans-serif;font-size:.88rem;font-weight:600;cursor:pointer">Brouillon</button>
+    <button onclick="sendMsg()" class="submit-btn" style="margin:0">Envoyer</button>
+  </div>
+</div>
+</div>
+
+<!-- SUCCESS SCREENS -->
+<div id="success-reco" class="screen success-screen">
+  <div style="font-size:4rem;margin-bottom:1rem">&#127881;</div>
+  <div style="font-family:DM Serif Display,serif;font-size:1.8rem;color:var(--navy);margin-bottom:.7rem">Recommandation envoyee !</div>
+  <div style="color:var(--text2);font-size:.88rem;line-height:1.7;max-width:300px;margin:0 auto 2rem">Votre contact va recevoir votre recommandation. Vous serez informe(e) des qu'il signe !</div>
+  <button class="btn btn-gold" style="max-width:300px" onclick="goTo('client-home')">Retour a l'accueil</button>
+</div>
+
+<div id="success-contact" class="screen success-screen">
+  <div style="font-size:4rem;margin-bottom:1rem">&#128222;</div>
+  <div style="font-family:DM Serif Display,serif;font-size:1.8rem;color:var(--navy);margin-bottom:.7rem">Demande envoyee !</div>
+  <div style="color:var(--text2);font-size:.88rem;line-height:1.7;max-width:300px;margin:0 auto 2rem">Votre conseiller vous contactera tres prochainement.</div>
+  <button class="btn btn-gold" style="max-width:300px" onclick="window.open('https://outlook.office.com/book/DcouvertedevosprojetsAlbertIssom@pluralle.onmicrosoft.com/?ismsaljsauthenabled','_blank')">Reserver un creneau</button>
+</div>
+
+<script>
+// CONFIG
+var CFG = JSON.parse(localStorage.getItem('pl-cfg') || 'null') || {
+  appName:'PatrimoLink',
+  appTag:'Recommandez - Recompensez - Reussissez',
+  logoInitials:'PL',
+  advisorName:'Albert Issom',
+  advisorTitle:'Conseiller en Gestion de Patrimoine - Pluralle',
+  bookingUrl:'https://outlook.office.com/book/DcouvertedevosprojetsAlbertIssom@pluralle.onmicrosoft.com/?ismsaljsauthenabled',
+  subjects:['Investissement / Epargne','Retraite / Prevoyance','Assurance vie','Immobilier / SCPI','Succession / Donation','Defiscalisation (PER, Girardin)','Bilan patrimonial','Optimisation fiscale','Transmission d'entreprise','Autre'],
+  paliers:[
+    {emoji:'🥉',name:'Bronze',sigs:10,budget:35,gift:'Bon cadeau Amazon'},
+    {emoji:'🥈',name:'Argent',sigs:20,budget:70,gift:'Bon cadeau Fnac'},
+    {emoji:'🥇',name:'Or',sigs:35,budget:140,gift:'Bon restaurant'},
+    {emoji:'💎',name:'Platine',sigs:50,budget:250,gift:'Experience premium'},
+    {emoji:'👑',name:'Elite',sigs:100,budget:500,gift:'Cadeau d'exception'}
+  ],
+  adminPwd:'Pluralle2025!'
+};
+
+var navStack = [];
+var pendingDest = 'client-home';
+var currentClient = JSON.parse(localStorage.getItem('pl-current-client') || 'null');
+var campaigns = JSON.parse(localStorage.getItem('pl-campaigns') || '[]');
+
+var MSG_TEMPLATES = [
+  {id:'impots',icon:'🧾',name:'Declaration impots',objet:'Declaration d'impots 2025 - je vous accompagne',body:'Bonjour,
+
+La periode de declaration d'impots s'ouvre prochainement. Je vous propose un accompagnement personnalise pour optimiser votre declaration et reduire votre imposition.
+
+N'hesitez pas a prendre rendez-vous.
+
+Cordialement,
+Albert Issom'},
+  {id:'event',icon:'📅',name:'Evenement / Webinaire',objet:'Invitation - Webinaire gratuit : Optimiser sa retraite',body:'Bonjour,
+
+J'ai le plaisir de vous inviter a mon prochain webinaire gratuit :
+
+"Optimiser sa retraite : les strategies qui font la difference"
+
+Places limitees - reservez votre creneau.
+
+Cordialement,
+Albert Issom'},
+  {id:'service',icon:'💼',name:'Offre de service',objet:'Une opportunite patrimoniale a ne pas manquer',body:'Bonjour,
+
+Je me permets de vous contacter car une opportunite d'investissement correspond particulierement a votre profil.
+
+Prenez rendez-vous pour en discuter.
+
+Cordialement,
+Albert Issom'},
+  {id:'bilan',icon:'📊',name:'Bilan annuel',objet:'Votre bilan patrimonial annuel',body:'Bonjour,
+
+Comme chaque annee, je vous propose de faire le point sur votre patrimoine.
+
+Prenez 30 minutes avec moi.
+
+Cordialement,
+Albert Issom'},
+  {id:'voeux',icon:'🎄',name:'Voeux fin d'annee',objet:'Meilleurs voeux pour cette nouvelle annee',body:'Bonjour,
+
+A l'approche de la nouvelle annee, je vous adresse mes meilleurs voeux.
+
+Belle annee a vous,
+Albert Issom'},
+  {id:'rappel',icon:'🔔',name:'Rappel / Relance',objet:'Un point rapide sur votre situation',body:'Bonjour,
+
+Cela fait quelques temps que nous ne nous sommes pas parles. Je voulais prendre de vos nouvelles.
+
+N'hesitez pas a me contacter.
+
+Cordialement,
+Albert Issom'}
+];
+
+var MSG_SEGMENTS = [
+  {id:'all',label:'Tous les clients'},
+  {id:'retraite',label:'Projet retraite'},
+  {id:'invest',label:'Investissement'},
+  {id:'actif',label:'Ambassadeurs actifs'},
+];
+var selectedSegments = ['all'];
+
+// ==================== NAVIGATION ====================
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var s = document.getElementById(id);
+  if(s){ s.classList.add('active'); navStack.push(id); window.scrollTo(0,0); }
+}
+function goBack() {
+  if(navStack.length>1){ navStack.pop(); var prev=navStack.pop(); goTo(prev); }
+  else{ goTo('landing'); }
+}
+function navTo(el, id) {
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  el.classList.add('active');
+  goTo(id);
+}
+
+// ==================== UTILS ====================
+function showNotif(msg) {
+  var el = document.getElementById('notif');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.style.display='none'; }, 3000);
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(){ document.querySelectorAll('.modal-bg.open').forEach(function(m){m.classList.remove('open');}); }
+function toggle(id){ var cb=document.getElementById(id); if(cb){cb.checked=!cb.checked; cb.dispatchEvent(new Event('change'));} }
+function setEl(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+function getVal(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+function setVal(id,v){ var e=document.getElementById(id); if(e) e.value=v||''; }
+function getCB(id){ var e=document.getElementById(id); return e&&e.checked; }
+function genCode(nom){ return ((nom||'XX').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase())+new Date().getFullYear(); }
+
+// ==================== CONSENTEMENT ====================
+function checkConsent(){
+  var ok = getCB('cg1') && getCB('cg2');
+  var btn = document.getElementById('consent-btn');
+  if(btn) btn.disabled = !ok;
+}
+function validateConsent(){
+  if(!getCB('cg1')||!getCB('cg2')){ showNotif('Cochez les cases obligatoires'); return; }
+  localStorage.setItem('pl-consent','1');
+  goTo(pendingDest);
+}
+function goWithConsent(dest){
+  pendingDest = dest;
+  if(localStorage.getItem('pl-consent')==='1'){ goTo(dest); }
+  else{ goTo('consent-gate'); }
+}
+
+// ==================== FORMULAIRES ====================
+function chkReco(){
+  var ok = getVal('reco-name') && getVal('reco-phone') && getVal('reco-sujet') && getCB('rc1') && getCB('rc2');
+  var b=document.getElementById('reco-btn'); if(b) b.disabled=!ok;
+}
+function chkRef(){
+  var ok = getVal('ref-name') && getVal('ref-phone') && getVal('ref-sujet') && getCB('refc1') && getCB('refc2');
+  var b=document.getElementById('ref-btn'); if(b) b.disabled=!ok;
+}
+
+async function sendReco(){
+  var btn=document.getElementById('reco-btn');
+  btn.disabled=true; btn.textContent='Envoi...';
+  var nom=getVal('reco-name'), tel=getVal('reco-phone'), email=getVal('reco-email');
+  var sujet=getVal('reco-sujet'), msg=getVal('reco-msg');
+  var code = currentClient ? currentClient.code : 'DIRECT';
+  var date = new Date().toLocaleString('fr-FR');
+  var recos = JSON.parse(localStorage.getItem('pl-recos')||'[]');
+  recos.push({id:Date.now(),nom:nom,tel:tel,email:email,sujet:sujet,msg:msg,parrain:code,date:date,statut:'En attente'});
+  localStorage.setItem('pl-recos', JSON.stringify(recos));
+  // Netlify Forms
+  try {
+    var fd = new FormData();
+    fd.append('form-name','recommandation');
+    fd.append('nom',nom); fd.append('telephone',tel); fd.append('email',email);
+    fd.append('sujet',sujet); fd.append('message',msg); fd.append('parrain',code); fd.append('date',date);
+    await fetch('/', {method:'POST', body:fd});
+  } catch(e){ console.log('Netlify form error (normal en local):',e); }
+  refreshClientView();
+  showNotif('Recommandation envoyee !');
+  setTimeout(function(){ goTo('success-reco'); }, 500);
+  btn.disabled=false; btn.textContent='Envoyer la recommandation';
+}
+
+async function sendContact(){
+  var btn=document.getElementById('ref-btn');
+  btn.disabled=true; btn.textContent='Envoi...';
+  var nom=getVal('ref-name'), tel=getVal('ref-phone'), email=getVal('ref-email'), sujet=getVal('ref-sujet');
+  var date=new Date().toLocaleString('fr-FR');
+  var contacts=JSON.parse(localStorage.getItem('pl-contacts')||'[]');
+  contacts.push({id:Date.now(),nom:nom,tel:tel,email:email,sujet:sujet,date:date,statut:'A contacter'});
+  localStorage.setItem('pl-contacts',JSON.stringify(contacts));
+  try {
+    var fd=new FormData();
+    fd.append('form-name','contact-prospect');
+    fd.append('nom',nom); fd.append('telephone',tel); fd.append('email',email); fd.append('sujet',sujet); fd.append('date',date);
+    await fetch('/',{method:'POST',body:fd});
+  } catch(e){ console.log('Netlify error:',e); }
+  showNotif('Demande envoyee !');
+  setTimeout(function(){ goTo('success-contact'); }, 500);
+  btn.disabled=false; btn.textContent='Demander a etre contacte(e)';
+}
+
+// ==================== ADMIN ====================
+function adminLogin(){
+  var pwd=getVal('adm-pwd');
+  if(!pwd){ showNotif('Entrez votre mot de passe'); return; }
+  if(pwd !== CFG.adminPwd){ showNotif('Mot de passe incorrect'); document.getElementById('adm-pwd').value=''; return; }
+  localStorage.setItem('pl-admin-auth',Date.now());
+  refreshAdmin();
+  goTo('admin-dashboard');
+}
+
+function refreshAdmin(){
+  var recos=JSON.parse(localStorage.getItem('pl-recos')||'[]');
+  var contacts=JSON.parse(localStorage.getItem('pl-contacts')||'[]');
+  var clients=JSON.parse(localStorage.getItem('pl-clients')||'[]');
+  var sigs=recos.filter(function(r){return r.statut==='Signe';}).length;
+  setEl('adm-clients',clients.length);
+  setEl('adm-recos',recos.length+contacts.length);
+  setEl('adm-sigs',sigs);
+  setEl('adm-conv',recos.length ? Math.round(sigs/recos.length*100)+'%' : '-');
+  // Recos list
+  var all=[].concat(recos.map(function(r){return Object.assign({},r,{type:'reco'});}), contacts.map(function(c){return Object.assign({},c,{type:'contact'});}));
+  all.sort(function(a,b){return b.id-a.id;});
+  var el=document.getElementById('adm-reco-list');
+  if(el){
+    if(!all.length){ el.innerHTML='<div style="font-size:.82rem;color:var(--text2)">Aucune recommandation recue pour l'instant.</div>'; }
+    else {
+      var h='';
+      all.slice(0,10).forEach(function(r){
+        var init=(r.nom||'??').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+        var bg=r.type==='reco'?'#e8f0fe':'#eaf3de';
+        var co=r.type==='reco'?'#1a56db':'#3b6d11';
+        h+='<div class="reco-item">';
+        h+='<div class="reco-avatar" style="background:'+bg+';color:'+co+'">'+init+'</div>';
+        h+='<div class="reco-info"><div class="reco-name">'+r.nom+'</div><div class="reco-date">'+r.sujet+' - '+(r.date||'').substring(0,10)+'</div></div>';
+        h+='<button onclick="showContactDetail(''+r.nom+'',''+r.tel+'',''+r.sujet+'',''+r.parrain+'')" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:.35rem .65rem;font-family:Sora,sans-serif;font-size:.73rem;font-weight:600;cursor:pointer">Voir</button>';
+        h+='</div>';
+      });
+      el.innerHTML=h;
+    }
+  }
+  // Clients
+  var cel=document.getElementById('adm-clients-list');
+  if(cel){
+    if(!clients.length){ cel.innerHTML='<div style="font-size:.82rem;color:var(--text2)">Aucun client. Ajoutez votre premier client !</div>'; }
+    else {
+      var h2='';
+      clients.forEach(function(cl){
+        var init=(cl.nom||'??').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+        var clRecos=recos.filter(function(r){return r.parrain===cl.code;});
+        h2+='<div class="client-row">';
+        h2+='<div class="reco-avatar">'+init+'</div>';
+        h2+='<div style="flex:1"><div style="font-weight:600;font-size:.88rem">'+cl.nom+'</div><div style="font-size:.72rem;color:var(--text2)">Code: '+cl.code+' - '+clRecos.length+' reco(s)</div></div>';
+        h2+='</div>';
+      });
+      cel.innerHTML=h2;
+    }
+  }
+}
+
+function showContactDetail(nom,tel,sujet,via){
+  setEl('modal-nom',nom); setEl('modal-tel',tel); setEl('modal-sujet',sujet); setEl('modal-via',via||'-');
+  openModal('contact-modal');
+}
+
+function saveStatut(){
+  var nom=document.getElementById('modal-nom').textContent;
+  var statut=document.getElementById('modal-statut').value;
+  var recos=JSON.parse(localStorage.getItem('pl-recos')||'[]');
+  var contacts=JSON.parse(localStorage.getItem('pl-contacts')||'[]');
+  recos.forEach(function(r){if(r.nom===nom)r.statut=statut==='Signe'?'Signe':statut;});
+  contacts.forEach(function(c){if(c.nom===nom)c.statut=statut;});
+  localStorage.setItem('pl-recos',JSON.stringify(recos));
+  localStorage.setItem('pl-contacts',JSON.stringify(contacts));
+  closeModal(); showNotif('Statut mis a jour !'); refreshAdmin();
+}
+
+function addClient(){
+  var nom=getVal('nc-nom');
+  if(!nom){showNotif('Entrez le nom du client');return;}
+  var email=getVal('nc-email'), tel=getVal('nc-tel');
+  var code=(getVal('nc-code')||genCode(nom)).toUpperCase();
+  var clients=JSON.parse(localStorage.getItem('pl-clients')||'[]');
+  clients.push({id:Date.now(),nom:nom,email:email,tel:tel,code:code,date:new Date().toLocaleString('fr-FR')});
+  localStorage.setItem('pl-clients',JSON.stringify(clients));
+  // Email invitation
+  var url=window.location.href.split('?')[0];
+  var subj=encodeURIComponent('Invitation PatrimoLink - Code '+code);
+  var body=encodeURIComponent('Bonjour '+nom+',
+
+Votre conseiller Albert Issom vous invite sur PatrimoLink.
+
+Votre lien : '+url+'?ref='+code+'
+Votre code : '+code+'
+
+Cordialement,
+Albert Issom');
+  window.open('mailto:'+email+'?subject='+subj+'&body='+body);
+  showNotif('Client ajoute ! Code : '+code);
+  setTimeout(function(){goBack();},700);
+}
+
+// ==================== SETTINGS ====================
+function saveSettings(){
+  CFG.appName=getVal('s-name')||CFG.appName;
+  CFG.appTag=getVal('s-tag')||CFG.appTag;
+  CFG.logoInitials=getVal('s-logo')||CFG.logoInitials;
+  localStorage.setItem('pl-cfg',JSON.stringify(CFG));
+  applyConfig(); showNotif('Reglages sauvegardes !');
+  setTimeout(function(){goTo('admin-dashboard');},600);
+}
+
+function changePwd(){
+  var p1=getVal('new-pwd'), p2=getVal('new-pwd2');
+  if(!p1||p1.length<6){showNotif('Mot de passe trop court');return;}
+  if(p1!==p2){showNotif('Les mots de passe ne correspondent pas');return;}
+  CFG.adminPwd=p1; localStorage.setItem('pl-cfg',JSON.stringify(CFG));
+  showNotif('Mot de passe change !');
+  document.getElementById('new-pwd').value=''; document.getElementById('new-pwd2').value='';
+}
+
+function addSujet(){
+  var v=getVal('new-sujet');
+  if(!v)return;
+  CFG.subjects.push(v); document.getElementById('new-sujet').value='';
+  renderSujetsList(); populateSelects();
+}
+
+function renderSujetsList(){
+  var el=document.getElementById('sujets-list'); if(!el)return;
+  var h='';
+  CFG.subjects.forEach(function(s,i){
+    h+='<div style="display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--cream);border-radius:8px;margin-bottom:.4rem">';
+    h+='<span style="flex:1;font-size:.88rem">'+s+'</span>';
+    h+='<button onclick="delSujet('+i+')" style="background:none;border:none;color:var(--red);font-size:1rem;cursor:pointer">x</button>';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+function delSujet(i){ CFG.subjects.splice(i,1); renderSujetsList(); populateSelects(); }
+
+function renderPaliersAdmin(){
+  var el=document.getElementById('paliers-admin'); if(!el)return;
+  var h='';
+  CFG.paliers.forEach(function(p,i){
+    h+='<div style="display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--cream2)">';
+    h+='<span style="font-size:1.2rem">'+p.emoji+'</span>';
+    h+='<input type="text" value="'+p.name+'" onchange="CFG.paliers['+i+'].name=this.value" style="flex:1;padding:.5rem;border:1px solid var(--cream2);border-radius:6px;font-family:Sora,sans-serif;font-size:.82rem">';
+    h+='<input type="number" value="'+p.sigs+'" onchange="CFG.paliers['+i+'].sigs=+this.value" style="width:60px;padding:.5rem;border:1px solid var(--cream2);border-radius:6px;font-family:Sora,sans-serif;font-size:.82rem" title="Signatures">';
+    h+='<input type="number" value="'+p.budget+'" onchange="CFG.paliers['+i+'].budget=+this.value" style="width:65px;padding:.5rem;border:1px solid var(--cream2);border-radius:6px;font-family:Sora,sans-serif;font-size:.82rem" title="Budget euros">';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ==================== MESSAGES ====================
+function renderMsgTemplates(){
+  var el=document.getElementById('msg-templates'); if(!el)return;
+  var h='';
+  MSG_TEMPLATES.forEach(function(t){
+    h+='<div class="template-card" onclick="useTemplate(''+t.id+'')"><div style="font-size:1.5rem;margin-bottom:.4rem">'+t.icon+'</div><div style="font-size:.82rem;font-weight:700">'+t.name+'</div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function renderMsgList(){
+  var el=document.getElementById('msg-list'); if(!el)return;
+  if(!campaigns.length){ el.innerHTML='<div style="font-size:.83rem;color:var(--text2);text-align:center;padding:2rem">Aucune campagne.</div>'; return; }
+  var h='';
+  campaigns.slice().reverse().forEach(function(c,ri){
+    var tpl=MSG_TEMPLATES.filter(function(t){return t.id===c.tplId;})[0]||MSG_TEMPLATES[0];
+    var cls=c.status==='prog'?'prog':c.status==='draft'?'draft':'sent';
+    var badge=c.status==='prog'?'Programme':c.status==='draft'?'Brouillon':'Envoye';
+    h+='<div class="msg-card '+cls+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">';
+    h+='<div><div style="font-weight:700;font-size:.88rem">'+tpl.icon+' '+(c.objet||'Sans titre')+'</div><div style="font-size:.72rem;color:var(--text2);margin-top:.2rem">'+new Date(c.ts).toLocaleDateString('fr-FR')+'</div></div>';
+    h+='<span style="font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;background:var(--cream2);color:var(--text2)">'+badge+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:.8rem;color:var(--text2);font-style:italic;margin-bottom:.6rem">'+(c.body||'').substring(0,100)+'...</div>';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+function renderSegments(){
+  var el=document.getElementById('c-segments'); if(!el)return;
+  var h='';
+  MSG_SEGMENTS.forEach(function(s){
+    var sel=selectedSegments.indexOf(s.id)>=0;
+    h+='<span class="segment-chip'+(sel?' sel':'')+'" onclick="toggleSeg(''+s.id+'')">'+s.label+'</span>';
+  });
+  el.innerHTML=h;
+}
+
+function toggleSeg(id){
+  if(id==='all'){ selectedSegments=['all']; }
+  else {
+    selectedSegments=selectedSegments.filter(function(s){return s!=='all';});
+    var idx=selectedSegments.indexOf(id);
+    if(idx>=0) selectedSegments.splice(idx,1); else selectedSegments.push(id);
+    if(!selectedSegments.length) selectedSegments=['all'];
+  }
+  renderSegments();
+}
+
+function useTemplate(id){
+  var tpl=MSG_TEMPLATES.filter(function(t){return t.id===id;})[0];
+  if(tpl){ setVal('c-objet',tpl.objet); setVal('c-body',tpl.body); }
+  goTo('admin-compose'); renderSegments();
+  document.getElementById('c-quand').addEventListener('change',function(){
+    document.getElementById('c-date').style.display=this.value!=='now'?'block':'none';
+  });
+}
+
+function saveDraft(){
+  var c={id:Date.now(),ts:Date.now(),tplId:'rappel',objet:getVal('c-objet'),body:getVal('c-body'),status:'draft',segments:selectedSegments.slice()};
+  campaigns.push(c); localStorage.setItem('pl-campaigns',JSON.stringify(campaigns));
+  showNotif('Brouillon sauvegarde !'); renderMsgList(); setTimeout(function(){goTo('admin-messages');},500);
+}
+
+function sendMsg(){
+  var quand=document.getElementById('c-quand').value;
+  var c={id:Date.now(),ts:Date.now(),tplId:'rappel',objet:getVal('c-objet'),body:getVal('c-body'),status:quand==='now'?'sent':'prog',segments:selectedSegments.slice(),annual:quand==='annual'};
+  campaigns.push(c); localStorage.setItem('pl-campaigns',JSON.stringify(campaigns));
+  var msg=quand==='now'?'Message envoye !':quand==='annual'?'Message programme (annuel) !':'Message programme !';
+  showNotif(msg); renderMsgList(); selectedSegments=['all'];
+  setTimeout(function(){goTo('admin-messages');},500);
+}
+
+// ==================== REFRESH CLIENT ====================
+function refreshClientView(){
+  if(!currentClient)return;
+  var recos=JSON.parse(localStorage.getItem('pl-recos')||'[]').filter(function(r){return r.parrain===currentClient.code;});
+  var sigs=recos.filter(function(r){return r.statut==='Signe';}).length;
+  setEl('cl-recos',recos.length); setEl('cl-sigs',sigs); setEl('cl-gifts','0');
+  // Reward banner
+  var paliers=CFG.paliers;
+  var next=paliers.filter(function(p){return sigs<p.sigs;})[0];
+  var prev=paliers.filter(function(p){return sigs>=p.sigs;}).pop();
+  if(next){
+    var base=prev?prev.sigs:0;
+    var pct=next.sigs>base?Math.round((sigs-base)/(next.sigs-base)*100):0;
+    setEl('reward-title',next.emoji+' Niveau '+next.name+' en vue !');
+    setEl('reward-sub','Plus que '+(next.sigs-sigs)+' signature(s) pour '+next.gift);
+    setEl('reward-count',sigs+' / '+next.sigs+' signatures');
+    setEl('reward-next','Cadeau '+next.budget+'euro');
+    var bar=document.getElementById('reward-bar');
+    if(bar)bar.style.width=pct+'%';
+  }
+  // Reco list
+  var el=document.getElementById('client-reco-list');
+  if(el){
+    if(!recos.length){ el.innerHTML='<div style="font-size:.83rem;color:var(--text2);text-align:center;padding:1rem">Aucune recommandation pour l'instant.</div>'; }
+    else {
+      var h='';
+      recos.slice().reverse().forEach(function(r){
+        var init=(r.nom||'??').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+        var cls=r.statut==='Signe'?'badge-sign':r.statut==='Contacte'?'badge-cont':'badge-pend';
+        h+='<div class="reco-item"><div class="reco-avatar">'+init+'</div><div class="reco-info"><div class="reco-name">'+r.nom+'</div><div class="reco-date">'+(r.date||'').substring(0,10)+'</div></div><span class="badge '+cls+'">'+r.statut+'</span></div>';
+      });
+      el.innerHTML=h;
+    }
+  }
+  // Paliers
+  var pel=document.getElementById('paliers-home');
+  if(pel){
+    var h2='';
+    paliers.forEach(function(p,i){
+      var done=sigs>=p.sigs;
+      var prev2=paliers[i-1];
+      var act=!done&&(i===0||sigs>=(prev2?prev2.sigs:0));
+      h2+='<div class="palier-chip'+(done?' done-p':act?' active-p':'')+'">';
+      h2+='<div style="font-size:1.4rem">'+p.emoji+'</div>';
+      h2+='<div style="font-size:.68rem;font-weight:600;color:var(--text2);text-transform:uppercase">'+p.name+'</div>';
+      h2+='<div style="font-size:.85rem;font-weight:700">'+p.budget+'euro</div>';
+      h2+='<div style="font-size:.62rem;margin-top:.2rem;color:'+(done?'var(--green)':act?'#8b6914':'var(--text2)')+'">'+(done?'Obtenu':act?'En cours':p.sigs+' sig.')+'</div>';
+      h2+='</div>';
+    });
+    pel.innerHTML=h2;
+  }
+  // Recompenses
+  var rel=document.getElementById('recompenses-list');
+  if(rel){
+    var h3='';
+    paliers.forEach(function(p,i){
+      var done=sigs>=p.sigs;
+      var prev3=paliers[i-1];
+      var act=!done&&(i===0||sigs>=(prev3?prev3.sigs:0));
+      h3+='<div style="display:flex;align-items:center;gap:1rem;padding:.7rem 0;'+(i<paliers.length-1?'border-bottom:1px solid var(--cream2)':'')+((!done&&!act)?';opacity:.5':'')+'"><div style="font-size:1.8rem">'+p.emoji+'</div><div style="flex:1"><div style="font-weight:700;font-size:.9rem">'+p.name+' - '+p.sigs+' signatures</div><div style="font-size:.78rem;color:var(--text2);margin-top:.1rem">'+p.gift+' - '+p.budget+'euro</div></div>';
+      var bs=done?'background:rgba(45,158,107,.1);color:var(--green)':act?'background:rgba(201,168,76,.1);color:#8b6914':'background:var(--cream2);color:var(--text2)';
+      h3+='<span style="font-size:.72rem;font-weight:700;padding:.28rem .65rem;border-radius:8px;'+bs+'">'+(done?'Obtenu':act?'En cours':'Bloque')+'</span></div>';
+    });
+    rel.innerHTML=h3;
+  }
+}
+
+// ==================== POPULATE SELECTS ====================
+function populateSelects(){
+  ['reco-sujet','ref-sujet'].forEach(function(id){
+    var sel=document.getElementById(id); if(!sel)return;
+    var cur=sel.value;
+    sel.innerHTML='<option value="">Choisir...</option>';
+    CFG.subjects.forEach(function(s){ var o=document.createElement('option'); o.value=s; o.textContent=s; sel.appendChild(o); });
+    if(cur)sel.value=cur;
+  });
+  var rdv=document.getElementById('rdv-sujets');
+  if(rdv){
+    var h='';
+    CFG.subjects.slice(0,8).forEach(function(s){
+      h+='<div style="display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--cream2)"><span style="color:var(--gold)">&#x2726;</span><span style="font-size:.85rem">'+s+'</span></div>';
+    });
+    rdv.innerHTML=h;
+  }
+}
+
+// ==================== APPLY CONFIG ====================
+function applyConfig(){
+  setEl('app-name',CFG.appName); setEl('logo-mark',CFG.logoInitials); setEl('app-tag',CFG.appTag);
+  document.title=CFG.appName;
+  setVal('s-name',CFG.appName); setVal('s-tag',CFG.appTag); setVal('s-logo',CFG.logoInitials);
+  populateSelects(); renderSujetsList(); renderPaliersAdmin(); renderMsgTemplates(); renderMsgList();
+  renderSegments();
+  // Partager
+  if(currentClient){
+    setEl('my-code',currentClient.code);
+    setEl('my-url',window.location.href.split('?')[0]+'?ref='+currentClient.code);
+    var av=document.getElementById('client-avatar');
+    if(av)av.textContent=(currentClient.nom||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+  }
+}
+
+// ==================== SHARE ====================
+function shareWA(){
+  var url=window.location.href.split('?')[0]+'?ref='+(currentClient?currentClient.code:'DIRECT');
+  window.open('https://wa.me/?text='+encodeURIComponent('Je te recommande mon conseiller en gestion de patrimoine ! '+url),'_blank');
+}
+function copyLink(){
+  var url=window.location.href.split('?')[0]+'?ref='+(currentClient?currentClient.code:'DIRECT');
+  navigator.clipboard.writeText(url).then(function(){showNotif('Lien copie !');}).catch(function(){showNotif(url);});
+}
+
+// ==================== INIT ====================
+function init(){
+  // Tuer les anciens service workers
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){ regs.forEach(function(r){r.unregister();}); });
+  }
+  if('caches' in window){
+    caches.keys().then(function(names){ names.forEach(function(n){caches.delete(n);}); });
+  }
+  applyConfig();
+  // Detecter code ref dans URL
+  var urlParams=new URLSearchParams(window.location.search);
+  var ref=urlParams.get('ref');
+  if(ref){
+    var clients=JSON.parse(localStorage.getItem('pl-clients')||'[]');
+    var found=clients.filter(function(c){return c.code===ref;})[0];
+    if(found){ currentClient=found; localStorage.setItem('pl-current-client',JSON.stringify(found)); }
+  }
+  if(currentClient){ refreshClientView(); }
+}
+
+init();
+</script>
+</body>
+</html>
